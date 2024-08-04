@@ -10,7 +10,7 @@ import org.apache.flink.util.Collector;
  * Hello world!
  *
  */
-public class App 
+public class WorkCount
 {
     public static void main( String[] args ) throws Exception {
 
