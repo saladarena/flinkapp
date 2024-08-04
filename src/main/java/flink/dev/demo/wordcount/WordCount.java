@@ -119,11 +119,13 @@ public class WordCount {
             text = env.fromData(WordCountData.WORDS).name("in-memory-input");
         }
 
+        DataStream<String> text2 = text.flatMap( new SimpleMap()).name("simplemap").disableChaining();
+
         DataStream<Tuple2<String, Integer>> counts =
                 // The text lines read from the source are split into words
                 // using a user-defined function. The tokenizer, implemented below,
                 // will output each word as a (2-tuple) containing (word, 1)
-                text.flatMap(new Tokenizer())
+                text2.flatMap(new Tokenizer())
                         .name("tokenizer")
                         // keyBy groups tuples based on the "0" field, the word.
                         // Using a keyBy allows performing aggregations and other
@@ -183,6 +185,15 @@ public class WordCount {
                     out.collect(new Tuple2<>(token, 1));
                 }
             }
+        }
+    }
+
+    public static final class SimpleMap
+            implements FlatMapFunction<String, String> {
+
+        @Override
+        public void flatMap(String value,Collector<String> out) {
+            out.collect(value);
         }
     }
 }
